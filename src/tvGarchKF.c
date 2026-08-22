@@ -1,5 +1,6 @@
 #include <R.h>
 #include <Rmath.h>
+#include <R_ext/Arith.h>
 #include <R_ext/BLAS.h>
 #include <Rinternals.h>
 
@@ -9,10 +10,10 @@ void tvGarch1ab(int *nsample, double *a, double *b, double *C, double *P, double
         double c = *C;
     int n = *nsample;
     for (int i = 0; i < n; i++) {
-        F[i] = P[i] + 1;//nuevo 
+        F[i] = P[i] + 1;//nuevo
         K[i] = ((a[i] + b[i]) * P[i] + a[i]) / F[i];
         if (i < (n - 1)) {
-            if (y[i] == 100000000) {
+            if (y[i] == 100000000 || ISNA(y[i])) {
                 P[i + 1] = (a[i] + b[i]) * P[i] * (a[i] + b[i]) + a[i] * (a[i]);
                 X[i + 1] = (a[i] + b[i]) * X[i];
             }
@@ -22,7 +23,7 @@ void tvGarch1ab(int *nsample, double *a, double *b, double *C, double *P, double
             }
             if (X[i + 1] + (c / (1 - a[i] - b[i])) < 0) {
                 X[i + 1] = 0;
-                //warning("Estimada varianza negativa")                               
+                //warning("Estimada varianza negativa")
             }
         }
     }
@@ -33,20 +34,20 @@ void tvGarch1ab2(int *nsample, double *a, double *b, double *c, double *P, doubl
     //    double c=*C;
     int n = *nsample;
     for (int i = 0; i < n; i++) {
-        F[i] = P[i] + 1;//nuevo 
+        F[i] = P[i] + 1;//nuevo
         K[i] = ((a[i] + b[i]) * P[i] + a[i]) / F[i];
         if (i < (n - 1)) {
-            if (y[i] == 100000000) {
+            if (y[i] == 100000000 || ISNA(y[i])) {
                 P[i + 1] = (a[i] + b[i]) * P[i] * (a[i] + b[i]) + a[i] * (a[i]);
                 X[i + 1] = (a[i] + b[i]) * X[i];
-            } 
+            }
             else {
             P[i + 1] = (a[i] + b[i]) * P[i] * (a[i] + b[i] - K[i]) + a[i] * (a[i] - K[i]);
             X[i + 1] = (a[i] + b[i] - K[i]) * X[i] + K[i] * y[i];
             }
             if (X[i + 1] + (c[i] / (1 - a[i] - b[i])) < 0) {
                 X[i + 1] = 0;
-            //warning("Estimada varianza negativa")                               
+            //warning("Estimada varianza negativa")
             }
         }
     }

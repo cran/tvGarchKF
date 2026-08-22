@@ -6,44 +6,47 @@
 \usage{
 tvGarch_Sim(
   n,
-  gamma,
+  c,
   alpha,
   beta,
   type = c("polynomial", "NoLineal", "trigonometric"),
   exponentes = NULL,
   trig = NULL,
-  arg = NULL
+  arg = NULL,
+  seed = NULL
 )
 }
 \arguments{
-\item{n}{integer}
+\item{n}{This is the value of the length of the series to be simulated.}
 
-\item{gamma}{Vector containing coefficents of c.}
+\item{c}{A vector for the coefficients for the function \eqn{c(u)} in the model.}
 
-\item{alpha}{Vector containing coefficents of alpha.}
+\item{alpha}{A vector for the coefficients for the function \eqn{\alpha(u)} in the model.}
 
-\item{beta}{Vector containing coefficents of beta.}
+\item{beta}{A vector for the coefficients for the function \eqn{\beta(u)} in the model.}
 
-\item{type}{Vector of function type for c, alpha and beta.}
+\item{type}{A character type=c("polynomial","NoLineal","trigonometric"), which indicates what type of function will be assigned to each tv-parameters.}
 
-\item{exponentes}{Vector for exponenets in NoLineal.}
+\item{exponentes}{A vector for the exponents for the "NoLinear" case.}
 
-\item{trig}{Type of trigonometric function.}
+\item{trig}{A character parameter indicating the trigonometric function to be used, "cos" or "sin".}
 
-\item{arg}{Value of argument for the trigonometric function.}
+\item{arg}{This is the value of the argument to be used in the trigonometric function.}
+
+\item{seed}{This value is the seed to simulate series.}
 }
 \value{
-An object of class 'zoo' with two components: the first component represents returns, while the second component denotes conditional variance.
+An object of class "zoo" with two components: the first component represents returns "x", while the second component denotes conditional variance "sigma".
 }
 \description{
-Simulate from a tv-Garch(1,1) model.
+Simulate from a tv-Garch(1,1) model, using specific functions for the tv-parameters.
 }
 \examples{
 ## Simulate from a tv-GARCH(1,1) model lineal:
 alpha_sim <- c(0.2, 0.2)
 beta_sim <- c(0.45, 0.5, -0.85)
 type_sim <- c("polynomial","polynomial","polynomial")
-Sim1 <- tvGarch_Sim(n = 6000, gamma = 0.1, alpha = alpha_sim, beta = beta_sim, type = type_sim)
+Sim1 <- tvGarch_Sim(n = 6000, c = 0.1, alpha = alpha_sim, beta = beta_sim, type = type_sim)
 plot(Sim1[,1], type="l", main="Simulated tvGARCH(1, 1) process",
     ylim=c(-max(Sim1[,2]), max(Sim1[,2])))
 lines(Sim1[,2], type="l", col="red")
@@ -54,7 +57,7 @@ alpha_sim2 <- c(0.75, 0.08)
 beta_sim2 <- c(0.05, 0.03, 0.06)
 type_sim2 <- c("polynomial","polynomial","NoLineal")
 expo <- c(0, 1, 1/2)
-Sim2<-tvGarch_Sim(n=6000,gamma=0.05,alpha=alpha_sim2,beta=beta_sim2,type=type_sim2,exponentes=expo)
+Sim2<-tvGarch_Sim(n=6000,c=0.05,alpha=alpha_sim2,beta=beta_sim2,type=type_sim2,exponentes=expo)
 plot(Sim2[,1], type="l", main="Simulated tvGARCH(1, 1) process",
      ylim=c(-max(Sim2[,2]),max(Sim2[,2])))
 lines(Sim2[,2], type="l", col="red")

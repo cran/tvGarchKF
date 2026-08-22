@@ -6,11 +6,11 @@
 \usage{
 tvGarchKalmanPrint(
   x,
-  series,
+  data,
   c,
   alpha,
   beta,
-  nsample = length(series),
+  nsample = length(data),
   type = c("polynomial", "NoLineal", "trigonometric"),
   exponentes,
   trig,
@@ -22,27 +22,27 @@ tvGarchKalmanPrint(
 \arguments{
 \item{x}{Vector of coefficents to fit.}
 
-\item{series}{Time series.}
+\item{data}{A univariate time series, where could be an object of class "ts" or "zoo".}
 
-\item{c}{Vector containing coefficents of c.}
+\item{c}{A vector for the coefficients for the function \eqn{c(u)} in the model.}
 
-\item{alpha}{Vector containing coefficents of alpha.}
+\item{alpha}{A vector for the coefficients for the function \eqn{\alpha(u)} in the model.}
 
-\item{beta}{Vector containing coefficents of beta.}
+\item{beta}{A vector for the coefficients for the function \eqn{\beta(u)} in the model.}
 
-\item{nsample}{Value of time series length.}
+\item{nsample}{A value of data length.}
 
-\item{type}{Vector of function type for c, alpha and beta.}
+\item{type}{A character type=c("polynomial","NoLineal","trigonometric"), which indicates what type of function will be assigned to each tv-parameters.}
 
-\item{exponentes}{Vector for exponenets in NoLineal.}
+\item{exponentes}{A vector for the exponents for the "NoLinear" case.}
 
-\item{trig}{Type of trigonometric function.}
+\item{trig}{A character parameter indicating the trigonometric function to be used, "cos" or "sin".}
 
-\item{arg}{Value of argument for the trigonometric function.}
+\item{arg}{This is the value of the argument to be used in the trigonometric function.}
 
 \item{trace.log}{Variable to print names of coefficients.}
 
-\item{predict}{Value for time to generate predict.}
+\item{predict}{A numeric value that indicates the h-steps of volatility prediction.}
 }
 \value{
 A data frame containing the following columns:
@@ -58,6 +58,7 @@ This function is designed to print the outputs of the tv-Garch model, which incl
 conditional variance, log-likelihood value, and mean squared error (MSE).
 }
 \examples{
+\donttest{
 data(ipsa)
 ipsa<-diff(log(indipsa))
 c<-c(0.05,0.05)
@@ -65,9 +66,10 @@ alpha<-c(0.05,0.05)
 beta<-c(0.05,0.05)
 type_fit<-c("trigonometric","trigonometric","trigonometric")
 fit<-tvGarchKalmanFit(ipsa,c=c,alpha=alpha,beta=beta,type=type_fit,trig="cos",arg="3*(1-log(u))")
-arg_model<-"3*(1-log(u))"
-model<-tvGarchKalmanPrint(fit,ipsa,c=c,alpha=alpha,beta=beta,type=type_fit,trig="cos",arg=arg_model)
+arg<-"3*(1-log(u))"
+model<-tvGarchKalmanPrint(fit@coef,ipsa,c=c,alpha=alpha,beta=beta,type=type_fit,trig="cos",arg=arg)
 plot(ipsa,ylab="",xlim=c(2000,2015))
 lines(ts(model$sigma, star=2000, freq=225), col="red", lwd=2)
 lines(ts(model$sigma*(-1), star=2000, freq=225), col="red", lwd=2)
+}
 }

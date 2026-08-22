@@ -1,75 +1,31 @@
 #' @title Models tv-Garch Filter Kalman LogLikehood.
 #' @description It is the function to use in the process to fit coefficients.
-#' @param x Vector of coefficents to fit.
-#' @param series Time series.
-#' @param c Vector containing coefficents of c.
-#' @param alpha Vector containing coefficents of alpha.
-#' @param beta Vector containing coefficents of beta.
-#' @param nsample Value of time series length.
-#' @param type Vector of function type for c, alpha and beta.
-#' @param exponentes Vector for exponenets in NoLineal.
-#' @param trig Type of trigonometric function.
-#' @param arg Value of argument for the trigonometric function.
-#' @param predict Value for time to generate predict.
+#' @param x A vector of coefficents to fit.
+#' @param data A univariate time series, where could be an object of class "ts" or "zoo".
+#' @param c A vector for the coefficients for the function \eqn{c(u)} in the model.
+#' @param alpha A vector for the coefficients for the function \eqn{\alpha(u)} in the model.
+#' @param beta A vector for the coefficients for the function \eqn{\beta(u)} in the model.
+#' @param nsample A value of data length.
+#' @param type A character type=c("polynomial","NoLineal","trigonometric"), which indicates what type of function will be assigned to each tv-parameters.
+#' @param exponentes A vector for the exponents for the "NoLinear" case.
+#' @param trig A character parameter indicating the trigonometric function to be used, "cos" or "sin".
+#' @param arg This is the value of the argument to be used in the trigonometric function.
+#' @param predict A numeric value that indicates the h-steps of volatility prediction.
 #' @param trace.log Variable to print names of coefficients.
 #' @return Value of loglike in model.
 #' @importFrom stats na.exclude
 #' @export
-tvGarchKalmanLoglike <- function(x, series, c, alpha, beta, nsample=length(series), type=c("polynomial","NoLineal","trigonometric"), exponentes, trig, arg, predict, trace.log=FALSE){
+tvGarchKalmanLoglike <- function(x, data, c, alpha, beta, nsample=length(data), type=c("polynomial","NoLineal","trigonometric"), exponentes = NULL, trig = NULL, arg = NULL, predict, trace.log=FALSE){
 
   pred<-rep(NA,predict)
-  series<-c(series,pred)
+  data<-c(data,pred)
 
-  nsample <- length(series)
+  nsample <- length(data)
   u <- (1:nsample)/nsample
-
-  aux1 <- length(c)
-  aux2 <- length(alpha)
-  aux3 <- length(beta)
-  if (aux1<=1){
-    c = x[1]
-  }else{
-    c = c()
-    for(i in 1:aux1){
-      c[i] = x[i]
-    }
-  }
-  if (aux2<=1){
-    alpha = x[1+aux1]
-  }else{
-    alpha = c()
-    for(i in 1:aux2){
-      alpha[i] = x[i+aux1]
-    }
-  }
-  if (aux3<=1){
-    beta = x[1+aux1+aux2]
-  }else{
-    beta = c()
-    for(i in 1:aux3){
-      beta[i] = x[i+aux2+aux1]
-    }
-  }
-
-  auxA <- list(c=c,alpha=alpha,beta=beta)
-  auxB <- list()
-  for(i in 1:length(type)){
-    if(type[i] == "polynomial"){
-      auxC <- polynomial(nsample, coeficientes = unlist(auxA[i]))
-    }
-    if(type[i] == "NoLineal"){
-      auxC <- NoLineal(nsample, coeficientes = unlist(auxA[i]), exponentes = exponentes)
-    }
-    if(type[i] == "trigonometric"){
-      auxC <- trigonometric(nsample, coeficientes = unlist(auxA[i]), trig = trig, arg = arg)
-    }
-    auxC <- list(auxC)
-    auxB <- c(auxB,auxC)
-  }
-
-  c <- unlist(auxB[1])
-  a <- unlist(auxB[2])
-  b <- unlist(auxB[3])
+  params <- tvCoef(x=x, data, c, alpha, beta, type, exponentes, trig, arg)
+  c <- params$c
+  a <- params$a
+  b <- params$b
 
   for(i in 1:nsample){
     if(any(is.nan(a[i])) || any(is.nan(b[i])) || any(is.nan(c[i]))) {
@@ -98,7 +54,7 @@ tvGarchKalmanLoglike <- function(x, series, c, alpha, beta, nsample=length(serie
   y <- NULL
 
   for(i in 1:nsample){
-    y[i] <- ifelse (is.na(series[i]), 100000000., series[i]^2-c[i]/(1-a[i]-b[i]))
+    y[i] <- ifelse (is.na(data[i]), 100000000., data[i]^2-c[i]/(1-a[i]-b[i]))
   }
 
   P <-rep(0, nsample) # Varianza del error de estimaci?n
@@ -109,22 +65,22 @@ tvGarchKalmanLoglike <- function(x, series, c, alpha, beta, nsample=length(serie
   # Inicializo P_1
   P[1]<-(a[1]^2)/(1-(a[1]+b[1])^2)
 
-  if (aux1 > 1){
+  if (length(c) > 1){
     resultado <- .C("tvGarch1ab2", as.integer(nsample), as.double(a), as.double(b), as.double(c), as.double(P), as.double(X), as.double(F.m), as.double(K), as.double(y))
   }else{
     resultado <- .C("tvGarch1ab", as.integer(nsample), as.double(a), as.double(b), as.double(c), as.double(P), as.double(X), as.double(F.m), as.double(K), as.double(y))
   }
 
-  X=resultado[[6]]
-  F.m=resultado[[7]]
-  K=resultado[[8]]
+  X <- resultado[[6]]
+  F.m <- resultado[[7]]
+  K <- resultado[[8]]
   ####
   e.sig2=X+(c/(1-a-b))
 
 
   if( min(e.sig2) <=0 | min(F.m) <=0 ){loglik=100000000}
   else{
-    loglik <- sum(na.exclude((sqrt(F.m)*series^2) / e.sig2 + log(e.sig2) - 0.5*log(F.m) ))
+    loglik <- sum(na.exclude((sqrt(F.m)*data^2) / e.sig2 + log(e.sig2) - 0.5*log(F.m) ))
     attr(loglik,"sigma")<-e.sig2
     loglik}
 }

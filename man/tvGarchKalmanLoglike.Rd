@@ -6,41 +6,41 @@
 \usage{
 tvGarchKalmanLoglike(
   x,
-  series,
+  data,
   c,
   alpha,
   beta,
-  nsample = length(series),
+  nsample = length(data),
   type = c("polynomial", "NoLineal", "trigonometric"),
-  exponentes,
-  trig,
-  arg,
+  exponentes = NULL,
+  trig = NULL,
+  arg = NULL,
   predict,
   trace.log = FALSE
 )
 }
 \arguments{
-\item{x}{Vector of coefficents to fit.}
+\item{x}{A vector of coefficents to fit.}
 
-\item{series}{Time series.}
+\item{data}{A univariate time series, where could be an object of class "ts" or "zoo".}
 
-\item{c}{Vector containing coefficents of c.}
+\item{c}{A vector for the coefficients for the function \eqn{c(u)} in the model.}
 
-\item{alpha}{Vector containing coefficents of alpha.}
+\item{alpha}{A vector for the coefficients for the function \eqn{\alpha(u)} in the model.}
 
-\item{beta}{Vector containing coefficents of beta.}
+\item{beta}{A vector for the coefficients for the function \eqn{\beta(u)} in the model.}
 
-\item{nsample}{Value of time series length.}
+\item{nsample}{A value of data length.}
 
-\item{type}{Vector of function type for c, alpha and beta.}
+\item{type}{A character type=c("polynomial","NoLineal","trigonometric"), which indicates what type of function will be assigned to each tv-parameters.}
 
-\item{exponentes}{Vector for exponenets in NoLineal.}
+\item{exponentes}{A vector for the exponents for the "NoLinear" case.}
 
-\item{trig}{Type of trigonometric function.}
+\item{trig}{A character parameter indicating the trigonometric function to be used, "cos" or "sin".}
 
-\item{arg}{Value of argument for the trigonometric function.}
+\item{arg}{This is the value of the argument to be used in the trigonometric function.}
 
-\item{predict}{Value for time to generate predict.}
+\item{predict}{A numeric value that indicates the h-steps of volatility prediction.}
 
 \item{trace.log}{Variable to print names of coefficients.}
 }

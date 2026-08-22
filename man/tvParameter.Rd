@@ -2,24 +2,57 @@
 % Please edit documentation in R/tvParameter.R
 \name{tvParameter}
 \alias{tvParameter}
-\title{Structure of the Time-Varying GARCH(1,1) Parameters}
+\title{Estimate the local structure of tv-GARCH(1,1) parameters.}
 \usage{
-tvParameter(data, S, N, plot = TRUE)
+tvParameter(
+  data,
+  S,
+  N,
+  plot = TRUE,
+  title = NULL,
+  description = NULL,
+  cex.axis = 2,
+  cex.main = 2.5,
+  cex.points = 2,
+  mar = c(5, 6, 4, 2),
+  mfrow = c(1, 3)
+)
 }
 \arguments{
-\item{data}{Represents the financial return series employed to investigate the temporal evolution of the parameters in the tv-GARCH(1,1) model.}
+\item{data}{A univariate time series, where could be an object of class "ts" or "zoo".}
 
-\item{S}{The number of observations by which the analysis window is shifted to define the starting point of the next block; also known as the step size or shift parameter.}
+\item{S}{A positive integer specifying the step size or shift between consecutive overlapping blocks.}
 
-\item{N}{The total number of observations contained within each data block, representing the block or window length over which local model estimation is performed.}
+\item{N}{A positive integer specifying the number of observations contained in each block.}
 
-\item{plot}{A Boolean flag indicating whether a graphical representation of the estimation results should be generated.}
+\item{plot}{A logical value indicating whether the local estimates of the time-varying parameter curves should be displayed. The default is TRUE.}
+
+\item{title}{An optional character string specifying a title associated with the fitted object. The default is NULL.}
+
+\item{description}{An optional character string providing a user-defined description. The default is NULL.}
+
+\item{cex.axis}{A numeric expansion factor controlling the size of the axis annotations. The default is 2.}
+
+\item{cex.main}{A numeric expansion factor controlling the size of the main title. The default is 2.5.}
+
+\item{cex.points}{A numeric expansion factor controlling the size of the points representing the local estimates of the time-varying parameters. The default is 2.}
+
+\item{mar}{A numeric vector specifying the plot margins in the order bottom, left, top and right. The default is c(5,6,4,2).}
+
+\item{mfrow}{A numeric vector of length two specifying the graphical layout. The default, c(1,3), arranges the local estimates of \eqn{c(u)}, \eqn{\alpha(u)} and \eqn{\beta(u)} in a single row.}
 }
 \value{
-Data frame who contains omega, alpha, beta of GARCH(1,1) model and midpoint each block.
+Data frame who contains c, alpha, beta of GARCH(1,1) model and midpoint each block.
 }
 \description{
-This function performs an exploratory analysis to uncover the dynamic structure of the time-varying GARCH(1,1) parameters. Specifically, the observation domain \eqn{\{1, \ldots,T\}} is partitioned into \eqn{M} overlapping blocks, each of length \eqn{N}, with a constant shift of size \eqn{S} between consecutive blocks. The relation between these quantities satisfies \eqn{T = S(M-1)+N}. The midpoint of the \eqn{j}-th block, for \eqn{j=1,\ldots,M}, is denoted \eqn{t_j=S(j-1)+N/2}. For each block, a local estimation of the stationary GARCH(1,1) model is performed using the observations within that block. The resulting sequence of local estimates, evaluated across all blocks, provides an empirical trajectory that reflects the underlying evolution of the time-varying parameters. This trajectory can serve as a guide for selecting flexible function classes capable of capturing their temporal variation.
+This function performs an exploratory analysis of the dynamic structure of the time-varying GARCH(1,1) parameters.
+Specifically, the observation domain \eqn{\{1, \ldots,T\}} is partitioned into \eqn{M} overlapping blocks, each of length \eqn{N}, with a
+constant shift of size \eqn{S} between consecutive blocks. These quantities satisfy \eqn{T = S(M-1)+N}. The midpoint
+of the \eqn{j}-th block, for \eqn{j=1,\ldots,M}, is defined as \eqn{t_j=S(j-1)+N/2}. For each block, a stationary GARCH(1,1) model
+is fitted using the obervations contained in that block. The resulting sequence of local estimates provides an
+empirical trajectory of the time-varying parameters \eqn{(c(u))}, \eqn{\alpha(u)} and \eqn{\beta(u)}. These trajectories can
+can be used as an exploratory tool for identifying suitable functional forms or as initial estimates for subsequent parametric
+or non-parametric estimation of the tv-GARCH parameter curves.
 }
 \examples{
 ipsa<-diff(log(indipsa))*100
