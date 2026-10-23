@@ -29,7 +29,7 @@ tvGarchKalmanLoglike <- function(x, data, c, alpha, beta, nsample=length(data), 
 
   for(i in 1:nsample){
     if(any(is.nan(a[i])) || any(is.nan(b[i])) || any(is.nan(c[i]))) {
-      stop("Se produjo un error al estimar los parametros")
+      stop("An error occurred while estimating the parameters.")
     }
   }
 
@@ -57,8 +57,8 @@ tvGarchKalmanLoglike <- function(x, data, c, alpha, beta, nsample=length(data), 
     y[i] <- ifelse (is.na(data[i]), 100000000., data[i]^2-c[i]/(1-a[i]-b[i]))
   }
 
-  P <-rep(0, nsample) # Varianza del error de estimaci?n
-  X <-rep(0, nsample)   # Representa el estado (alfa)
+  P <-rep(0, nsample)
+  X <-rep(0, nsample)
   F.m <-rep(0, nsample)
   K <-rep(0, nsample)
 
@@ -82,5 +82,6 @@ tvGarchKalmanLoglike <- function(x, data, c, alpha, beta, nsample=length(data), 
   else{
     loglik <- sum(na.exclude((sqrt(F.m)*data^2) / e.sig2 + log(e.sig2) - 0.5*log(F.m) ))
     attr(loglik,"sigma")<-e.sig2
-    loglik}
+    loglik
+    }
 }

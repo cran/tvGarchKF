@@ -47,31 +47,24 @@ setClass(
 )
 
 setMethod("show", "tvGarchKF", function(object) {
-  #cat("Objeto de clase 'MiClase'\n")
   for (s in slotNames(object)) {
     val <- slot(object, s)
     if(!identical(val,"NOT APPLIED"))
     {
       cat(s,":\n")
       if (is.numeric(val) && !is.null(names(val))) {
-        # Caso vector numérico con nombres (coeficientes)
       print(val)
       } else if (is.vector(val) && length(val) < 10) {
-        # Vector corto → lo muestro completo
         cat(" ", paste(val, collapse = " "), "\n")
         cat("\n")
       } else if (is.vector(val)) {
-        # Vector largo → muestro un resumen
         cat(" ", paste(head(val, 15), collapse = " "), "... (", length(val), "elementos )\n")
         cat("\n")
       } else if (is.matrix(val) || is.data.frame(val)) {
-        # Matriz o data.frame → muestro sus dimensiones y cabecera
         cat(" [", nrow(val), "x", ncol(val), "]\n", sep = "")
-        print(utils::head(val, 15))  # primeras 15 filas
+        print(utils::head(val, 15))
         cat("\n")
-        #print(val)
       } else {
-        # Caso general (lista, ts, etc.)
         print(val)
         cat("\n")
       }

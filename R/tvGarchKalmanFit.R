@@ -76,10 +76,6 @@ tvGarchKalmanFit <- function(data,
   }
   par <- round(aux$par,5)
 
-  # if(plot == TRUE){
-  #   params_parameter <- tvCoef(x=par, data, c, alpha, beta, type, exponentes, trig, arg, S, N, flag = FALSE)
-  #   tvParameter(data = data, S=S, N=N, plot=plot, fit = par, c = params_parameter$c, a = params_parameter$a, b = params_parameter$b)
-  # }
   x <- aux$par
   aux. <- tvGarchKalmanPrint(x = x, data = data, c = c, alpha = alpha,
                              beta = beta, type = type, exponentes = exponentes,
@@ -88,9 +84,8 @@ tvGarchKalmanFit <- function(data,
 
   loglik <- aux.$loglik
   fitted.values <- aux.$sigma
-
   if (is.null(fitted.values) || all(is.na(fitted.values))) {
-    stop("El modelo no pudo ser ajustado: la verosimilitud fue penalizada.")
+    stop("The model could not be fitted: the likelihood was penalized.")
   }
 
   aic <- -2*loglik + 2*length(x)/length(data)

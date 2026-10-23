@@ -63,7 +63,7 @@ setMethod(f = "summary", signature(object = "tvGarchKF"), definition = function(
 
   aux1 <- object@coef
   if (is.null(aux1) || length(aux1) == 0) {
-    cat("No hay 'coef' en el objeto; se omite la tabla de coeficientes.\n")
+    cat("There is no 'coef' in the object; omitting the coefficients table.\n")
   } else {
     # Nombres solo si hay 6 parámetros
     if (is.null(names(aux1)) && length(aux1) == 6L) {
@@ -117,7 +117,6 @@ setMethod(f = "summary", signature(object = "tvGarchKFNonParam"), definition = f
     cat("=================================================\n")
     cat("Nonparametric Method:", object@method, "\n\n")
 
-    # Solo para el caso 'Local Polynomial' mostramos summaries de los GLM locales
     if (identical(object@method, "Local Polynomial")) {
 
       max_val <- unname(object@Check_condition["Max."])
@@ -146,7 +145,6 @@ setMethod(f = "summary", signature(object = "tvGarchKFNonParam"), definition = f
       print_eval_model(res)
     }
 
-    # Solo para el caso "Smoothing Spline" mostramos summaries de los GLM locales
     if (identical(object@method, "Smoothing Spline")) {
 
       max_val <- unname(object@Check_condition["Max."])
@@ -179,7 +177,6 @@ setMethod(f = "summary", signature(object = "tvGarchKFNonParam"), definition = f
       res <- eval_model(object@tvparameter[,2:4], object@fitted.values, na.rm = TRUE)
       print_eval_model(res)
     }
-    ############ B-spline
 
     if (identical(object@method, "B-Spline")) {
 
@@ -208,11 +205,6 @@ setMethod(f = "summary", signature(object = "tvGarchKFNonParam"), definition = f
       res <- eval_model(object@tvparameter[,2:4], object@fitted.values, na.rm = TRUE)
       print_eval_model(res)
     }
-
-    # Si el objeto no-paramétrico trae métricas, muéstralas
-    # if (!is.null(object@loglik)) cat("\nLog-Likelihood:", round(object@loglik, 4), "\n")
-    # if (!is.null(object@aic))    cat("AIC:", round(object@aic, 4), "\n")
-    # if (!is.null(object$bic))    cat("BIC:", round(object$bic, 4), "\n")
 
     return(invisible(object))
   }

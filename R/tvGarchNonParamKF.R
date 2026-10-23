@@ -68,13 +68,13 @@ tvGarchNonParamKF<- function(data,
 
 
   if (!all(length(a) == nsample, length(b) == nsample, length(c) == nsample))
-    stop("a, b y c deben tener el mismo largo que 'data'.")
+    stop("a, b, and c must have the same length as 'data'.")
 
   if (any(is.na(a) | is.na(b) | is.na(c), na.rm = TRUE)) {
     # si hay NA en params justo donde series no es NA, es un problema
     bad <- which((is.na(a) | is.na(b) | is.na(c)) & !is.na(data))
     if (length(bad) > 0)
-      stop("Hay NA en a/b/c en indices con observacion. Corrige parametros en: ",
+      stop("There are NA values in a/b/c at indices with observations. Correct parameters in: ",
            paste(head(bad, 10), collapse = ", "), if (length(bad) > 10) " ...")
   }
 

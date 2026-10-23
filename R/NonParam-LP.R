@@ -85,25 +85,30 @@ run_polynomial_and_local_fit <- function(data, tvparameter, plot = TRUE,
   if (isTRUE(plot)) {
     oldpar <- par(no.readonly = TRUE)
     on.exit(par(oldpar))
-    par(mfrow = c(1, 3))
+    par(mfrow = c(1, 3), mar = c(5, 6, 4, 2))
 
-    plot(t, w1, xlim = c(0, n), ylim = c(min(w1)*0.5, max(w1)*1.5),
-         bty = "n", main = expression(~c), las = 1, lwd = 3,
-         ylab = "", cex.axis = 1.2, xlab = "", cex.main = 1.5, pch = 20)
-    lines(t, fit_omega$fitted, lwd = 3, col = "orange")
+    t_plot = (t-min(t))/(max(t)-min(t))
+
+    plot(t_plot, w1, xlim = c(0, max(t_plot)), ylim = c(min(w1)*0.5, max(w1)*1.5),
+         bty = "n", main = expression(~c(u)), las = 1, lwd = 3,
+         ylab = "", cex.axis = 1.2, xlab = "", cex.main = 2, pch = 20)
+    lines(t_plot, fit_omega$fitted, lwd = 3, col = "orange")
     abline(h = G1[1, 1], lwd = 2, lty = 2)
+    mtext(side=1, text = "u", line=3, cex=1.5)
 
-    plot(t, a1, xlim = c(0, n), ylim = c(min(a1)*0.5, max(a1)*1.5),
-         bty = "n", main = expression(~alpha), las = 1, lwd = 3,
-         ylab = "", cex.axis = 1.2, xlab = "", cex.main = 1.5, pch = 20)
-    lines(t, fit_alpha$fitted, lwd = 3, col = "orange")
+    plot(t_plot, a1, xlim = c(0, max(t_plot)), ylim = c(min(a1)*0.5, max(a1)*1.5),
+         bty = "n", main = expression(~alpha(u)), las = 1, lwd = 3,
+         ylab = "", cex.axis = 1.2, xlab = "", cex.main = 2, pch = 20)
+    lines(t_plot, fit_alpha$fitted, lwd = 3, col = "orange")
     abline(h = G1[2, 1], lwd = 2, lty = 2)
+    mtext(side=1, text = "u", line=3, cex=1.5)
 
-    plot(t, b1, xlim = c(0, n), ylim = c(min(b1)*0.5, max(b1)*1.5),
-         bty = "n", main = expression(~beta), las = 1, lwd = 3,
-         ylab = "", cex.axis = 1.2, xlab = "", cex.main = 1.5, pch = 20)
-    lines(t, fit_beta$fitted, lwd = 3, col = "orange")
+    plot(t_plot, b1, xlim = c(0, max(t_plot)), ylim = c(min(b1)*0.5, max(b1)*1.5),
+         bty = "n", main = expression(~beta(u)), las = 1, lwd = 3,
+         ylab = "", cex.axis = 1.2, xlab = "", cex.main = 2, pch = 20)
+    lines(t_plot, fit_beta$fitted, lwd = 3, col = "orange")
     abline(h = G1[3, 1], lwd = 2, lty = 2)
+    mtext(side=1, text = "u", line=3, cex=1.5)
   }
 
   out <- list(

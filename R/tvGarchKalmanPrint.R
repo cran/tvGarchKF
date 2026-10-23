@@ -45,13 +45,7 @@ tvGarchKalmanPrint <- function(x, data, c, alpha, beta, nsample=length(data), ty
   nsample=length(data)
   u <- (1:nsample)/nsample
 
-  pars = c(c, alpha, beta)
-  if(type[1]!="polynomial" | type[2]!="polynomial" | type[3]!="polynomial"){
-    aux <- optim(par = pars, fn = tvGarchKalmanLoglike, data = data, c = c, alpha = alpha, beta = beta, type = type, exponentes = exponentes, trig = trig, arg = arg, method = c("BFGS"))
-  }else{
-    aux <- optim(par = pars, fn = tvGarchKalmanLoglike, data = data, c = c, alpha = alpha, beta = beta, type = type, exponentes = exponentes, trig = trig, arg = arg, method = c("CG"))
-  }
-  par <- round(aux$par,5)
+  par <- round(x,5)
 
   params <- tvCoef(x = par, data, c, alpha, beta, type, exponentes, trig, arg)
   c <- params$c
@@ -61,7 +55,7 @@ tvGarchKalmanPrint <- function(x, data, c, alpha, beta, nsample=length(data), ty
 
   for(i in 1:nsample){
     if(any(is.nan(a[i])) || any(is.nan(b[i])) || any(is.nan(c))) {
-      stop("Se produjo un error al estimar los parametros")
+      stop("An error occurred while estimating the parameters.")
     }
   }
 
@@ -84,8 +78,8 @@ tvGarchKalmanPrint <- function(x, data, c, alpha, beta, nsample=length(data), ty
   }
 
 
-  P <-rep(0, nsample) # Varianza del error de estimaci?n
-  X <-rep(0, nsample)   # Representa el estado (alfa)
+  P <-rep(0, nsample)
+  X <-rep(0, nsample)
   F.m <-rep(0, nsample)
   K<-rep(0, nsample)
 
@@ -119,7 +113,7 @@ tvGarchKalmanPrint <- function(x, data, c, alpha, beta, nsample=length(data), ty
   if (all(e.sig2>=0)){
     sigma<-sqrt(e.sig2)
     OUT$sigma = sigma**2
-  }else{print("Hay valores negativos en sigma.")}
+  }else{print("Exists negative values in sigma.")}
   OUT$X=X
   OUT$Fm=F.m
   OUT$loglik = loglik

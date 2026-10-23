@@ -4,8 +4,9 @@ bibentry(
   bibtype  = "Manual",
   title    = "tvGarchKF",
   author   = c(
+  person("Tomás", "Arancibia"),
   person("Guillermo", "Ferreira"),
-  person("Tomás", "Arancibia")
+  person("Francisco", "Rodríguez-Cortés")
   ),
   year     = 2026,
   url      = "https://github.com/Tomas-UDEC/tvGarchKF",

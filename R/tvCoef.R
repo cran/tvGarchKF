@@ -29,7 +29,6 @@ tvCoef <- function(x, data, c, alpha, beta, type, exponentes, trig, arg, S, N, f
   }
   auxA <- list(c=c, alpha=alpha, beta=beta)
   auxB <- list()
-  #auxC <- list()
   if(flag==FALSE){
     for(i in 1:length(type)){
       if(type[i] == "polynomial"){

@@ -102,19 +102,16 @@ setMethod(f = "plot", signature(x = "tvGarchKF"), definition =
                      trig = NULL,
                      arg = NULL,
 
-                     ## colores
                      col.points = "black",
                      col.fit = NULL,
                      col.stationary = "black",
 
-                     ## líneas
                      lwd.y = 3,
                      lwd.fit = 3,
                      lwd.stationary = 2,
                      lty.fit = 1,
                      lty.stationary = 2,
 
-                     ## símbolos y texto
                      pch = 20,
                      cex.points = 3,
                      cex.axis = 2,
@@ -122,21 +119,17 @@ setMethod(f = "plot", signature(x = "tvGarchKF"), definition =
                      cex.main = 2,
                      cex.legend = 1.2,
 
-                     ## disposición gráfica
                      mfrow = c(1, 3),
-                     mar = c(5, 5, 4, 2),
+                     mar = c(5, 6, 4, 2),
 
-                     ## etiquetas
                      xlab = "Time",
                      ylab = "Log-Returns",
                      main = NULL,
 
-                     ## leyenda
                      legend = TRUE,
                      legend.pos = "bottomleft",
                      legend.label = NULL,
 
-                     ## opciones base R
                      bty = "n",
                      las = 1,
                      ann = FALSE,
@@ -270,7 +263,7 @@ setMethod(f = "plot", signature(x = "tvGarchKFNonParam_Fit"), definition =
 
                   ## disposición gráfica
                   mfrow = c(1, 3),
-                  mar = c(5, 5, 4, 2),
+                  mar = c(5, 6, 4, 2),
 
                   ## etiquetas
                   xlab = "Time",
@@ -410,7 +403,7 @@ setMethod(f = "plot", signature(x = "tvGarchKFNonParam"), definition =
 
                      ## disposición gráfica
                      mfrow = c(1, 3),
-                     mar = c(5, 5, 4, 2),
+                     mar = c(5, 6, 4, 2),
 
                      ## etiquetas
                      xlab = "Time",

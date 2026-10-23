@@ -14,7 +14,6 @@ fit_b_spline_models <- function(data, tvparameter, plot = TRUE,
   alpha <- tvparameter$alpha
   beta <- tvparameter$beta
 
-  # bs_deg_grid    <- degree_grid
   degree <- degree
   optimal_df <- df
   tvparameter$u <- t/n
@@ -53,28 +52,33 @@ fit_b_spline_models <- function(data, tvparameter, plot = TRUE,
     oldpar <- par(no.readonly = TRUE)
     on.exit(par(oldpar))
     x <- tvparameter$t
-    par(mfrow = c(1, 3))
+    par(mfrow = c(1, 3), mar = c(5, 6, 4, 2))
 
-    plot(x, tvparameter$c, xlim = c(0, n),
+    t_plot = (t-min(t))/(max(t)-min(t))
+
+    plot(t_plot, tvparameter$c, xlim = c(0, max(t_plot)),
          ylim = c(min(tvparameter$c)*0.5, max(tvparameter$c)*1.5),
-         bty = "n", main = expression(~c), las = 1, lwd = 3, ylab = "",
-         cex.axis = 1.2, xlab = "", cex.main = 1.5, pch = 20)
-    lines(x, fit_omega.bs$fitted.values, lwd = 3, col = "blue")
+         bty = "n", main = expression(~c(u)), las = 1, lwd = 3, ylab = "",
+         cex.axis = 1.2, xlab = "", cex.main = 2.0, pch = 20)
+    lines(t_plot, fit_omega.bs$fitted.values, lwd = 3, col = "blue")
     abline(h = G1[1, 1], lwd = 2, lty = 2)
+    mtext(side=1, text = "u", line=3, cex=1.5)
 
-    plot(x, tvparameter$alpha, xlim = c(0, n),
+    plot(t_plot, tvparameter$alpha, xlim = c(0, max(t_plot)),
          ylim = c(min(tvparameter$alpha)*0.5, max(tvparameter$alpha)*1.5),
-         bty = "n", main = expression(~alpha), las = 1, lwd = 3, ylab = "",
-         cex.axis = 1.2, xlab = "", cex.main = 1.5, pch = 20)
-    lines(x, fit_alpha.bs$fitted.values, lwd = 3, col = "blue")
+         bty = "n", main = expression(~alpha(u)), las = 1, lwd = 3, ylab = "",
+         cex.axis = 1.2, xlab = "", cex.main = 2.0, pch = 20)
+    lines(t_plot, fit_alpha.bs$fitted.values, lwd = 3, col = "blue")
     abline(h = G1[2, 1], lwd = 2, lty = 2)
+    mtext(side=1, text = "u", line=3, cex=1.5)
 
-    plot(x, tvparameter$beta, xlim = c(0, n),
+    plot(t_plot, tvparameter$beta, xlim = c(0, max(t_plot)),
          ylim = c(min(tvparameter$beta)*0.5, max(tvparameter$beta)*1.5),
-         bty = "n", main = expression(~beta), las = 1, lwd = 3, ylab = "",
-         cex.axis = 1.2, xlab = "", cex.main = 1.5, pch = 20)
-    lines(x, fit_beta.bs$fitted.values, lwd = 3, col = "blue")
+         bty = "n", main = expression(~beta(u)), las = 1, lwd = 3, ylab = "",
+         cex.axis = 1.2, xlab = "", cex.main = 2.0, pch = 20)
+    lines(t_plot, fit_beta.bs$fitted.values, lwd = 3, col = "blue")
     abline(h = G1[3, 1], lwd = 2, lty = 2)
+    mtext(side=1, text = "u", line=3, cex=1.5)
   }
 
   out <- list(
@@ -88,7 +92,6 @@ fit_b_spline_models <- function(data, tvparameter, plot = TRUE,
     Param_model       = list(c = fit_omega.bs, alpha = fit_alpha.bs, beta = fit_beta.bs),
     best_degree       = degree,
     best_df           = optimal_df
-    # local_used        = list(df = optimal_df, degree = degree)
   )
   class(out) <- c("tvgarchKF", class(out))
   return(out)

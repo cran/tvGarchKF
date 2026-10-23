@@ -160,7 +160,7 @@ select_best_method_tv_stationary <- function(object,
   }
 
   if (is.null(best_omega)) {
-    stop("No valid smooth GAM fit was found for c")
+    stop("No valid smooth GAM fit was found for c.")
   }
 
   # =========================================================
@@ -497,7 +497,6 @@ match_ss_spar_by_edf <- function(x, y,
 
   if (is.null(fit)) return(out)
 
-  # Valores ajustados
   if (!is.null(fit$y)) {
     out$yhat <- as.numeric(fit$y)
   } else if (!is.null(fit$fitted.values)) {
@@ -525,7 +524,6 @@ match_ss_spar_by_edf <- function(x, y,
     sm <- try(summary(fit), silent = TRUE)
 
     if (!inherits(sm, "try-error")) {
-      # Intentar extraer df desde summary
       txt <- capture.output(sm)
       df_line <- grep("Residual standard error", txt, value = TRUE)
 

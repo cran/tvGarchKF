@@ -6,7 +6,7 @@
 .normalize_tv_names <- function(df) {
   stopifnot(is.data.frame(df))
   cn <- names(df)
-  if (is.null(cn)) stop("'tvparameter' should have columns names")
+  if (is.null(cn)) stop("'tvparameter' should have columns names.")
 
   num_idx <- which(vapply(df, is.numeric, logical(1)))
   if (length(num_idx) < 4L) {
@@ -54,8 +54,8 @@
   if (is.na(ib)) ib <- pick_next()
 
   if (any(is.na(c(it, io, ia, ib)))) {
-    stop("No se pudo identificar automaticamente t/c/alpha/beta.",
-         "Renombra las columnas o asegurate de tener \u2265 4 numericas.")
+    stop("Could not automatically identify t/c/alpha/beta.",
+         "Rename the columns or make sure you have \u2265 4 numeric.")
   }
 
   out <- data.frame(
@@ -124,7 +124,7 @@ eval_model <- function(tvparameter, Fittvparameter, na.rm = TRUE) {
   num_tv  <- which(vapply(tvparameter, is.numeric, logical(1)))
   num_fit <- which(vapply(Fittvparameter, is.numeric, logical(1)))
   if (length(num_tv) == 0L || length(num_fit) == 0L) {
-    stop("Ambos data frames deben contener columnas numericas.")
+    stop("Both data frames must contain numeric columns.")
   }
 
   k <- min(length(num_tv), length(num_fit))
@@ -344,11 +344,12 @@ plot_tvGarchKalmanFit <- function(fit,
                                   mar = c(5, 6, 4, 2),margen=0.01) {
 
   coef_tv <- tv_curve@coef
-  n <- length(fit@sigma2)
-  t     <- coef_tv$t
-  c <- coef_tv$c
-  alpha <- coef_tv$alpha
-  beta  <- coef_tv$beta
+  n       <- length(fit@sigma2)
+  t       <- coef_tv$t
+  c       <- coef_tv$c
+  alpha   <- coef_tv$alpha
+  beta    <- coef_tv$beta
+  t_plot = (t-min(t))/(max(t)-min(t))
 
   u <- t / n
 
@@ -359,9 +360,7 @@ plot_tvGarchKalmanFit <- function(fit,
   build_curve <- function(model_type, u) {
 
     model_type <- tolower(model_type)
-
     if (model_type == "constant") {
-
       y <- fit[idx] + 0 * u
       idx <<- idx + 1
 
@@ -410,17 +409,13 @@ plot_tvGarchKalmanFit <- function(fit,
     } else if (model_type %in% c("coslog", "logcos")) {
 
       u_safe <- pmax(u, .Machine$double.eps)
-
       y <- fit[idx] +
         fit[idx + 1] * cos(3 * (1 - log(u_safe)))
-
       idx <<- idx + 2
 
     } else {
-
       stop("Unknown model type: ", model_type)
     }
-
     y
   }
 
@@ -437,9 +432,8 @@ plot_tvGarchKalmanFit <- function(fit,
       min(c(y_true, y_hat,g), na.rm = TRUE) - margen,
       max(c(y_true, y_hat, g), na.rm = TRUE) + margen
     )
-
-    plot(t, y_true,
-         xlim = c(0, n),
+    plot(t_plot, y_true,
+         xlim = c(0, max(t_plot)), #c(0,n)
          ylim = ylim,
          bty = "n",
          main = main_expr,
@@ -451,7 +445,7 @@ plot_tvGarchKalmanFit <- function(fit,
          cex.axis = cex.axis,
          cex.main = cex.main,
          col = col.points)
-       lines(t, y_hat,
+    lines(t_plot, y_hat,
           col = col.fit,
           lwd = lwd.fit,
           lty = lty.fit)
@@ -462,9 +456,12 @@ plot_tvGarchKalmanFit <- function(fit,
            lty = lty.stationary)
   }
 
-  plot_one(c, hat_c, G[1], expression(c), margen)
-  plot_one(alpha, hat_alpha, G[2], expression(alpha), margen)
-  plot_one(beta,  hat_beta,  G[3], expression(beta), margen)
+  plot_one(c, hat_c, G[1], expression(c(u)), margen)
+  mtext(side=1, text = "u", line=3, cex=1.5)
+  plot_one(alpha, hat_alpha, G[2], expression(alpha(u)), margen)
+  mtext(side=1, text = "u", line=3, cex=1.5)
+  plot_one(beta,  hat_beta,  G[3], expression(beta(u)), margen)
+  mtext(side=1, text = "u", line=3, cex=1.5)
 
   invisible(data.frame(
     t = t,
@@ -510,10 +507,11 @@ plot_tvGarchNonParamFit <- function(object,
 
   n     <- length(object@data)
   t     <- coef_tv$t
-  c <- coef_tv$c
+  c     <- coef_tv$c
   alpha <- coef_tv$alpha
   beta  <- coef_tv$beta
   u     <- t/n
+  t_plot <- (t-min(t))/(max(t)-min(t))
 
   G <- tv_curve@stationary_coef
 
@@ -573,19 +571,13 @@ plot_tvGarchNonParamFit <- function(object,
   par(mfrow = mfrow, mar = mar)
 
   plot_one <- function(y_true, y_hat, g, main_expr,margen) {
-    # ylim <- range(c(y_true, y_hat, g), na.rm = TRUE)
-    # pad <- 0.05 * diff(ylim)
-    # if (pad == 0) pad <- 0.01
-    # ylim <- ylim + c(-pad, pad)
-    #ylim <- c(0, 1.05 * max(c(y_true, y_hat, g), na.rm = TRUE))
-
     ylim <- c(
       min(c(y_true,y_hat, g), na.rm = TRUE) - margen,
       max(c(y_true,y_hat, g), na.rm = TRUE) + margen
     )
 
-    plot(t, y_true,
-         xlim = c(0, n),
+    plot(t_plot, y_true,
+         xlim = c(0, max(t_plot)),
          ylim = ylim,
          bty = "n",
          main = main_expr,
@@ -598,7 +590,7 @@ plot_tvGarchNonParamFit <- function(object,
          cex.main = cex.main,
          col = col.points)
 
-    lines(t, y_hat,
+      lines(t_plot, y_hat,
           col = col.fit,
           lwd = lwd.fit,
           lty = lty.fit)
@@ -609,9 +601,12 @@ plot_tvGarchNonParamFit <- function(object,
            lty = lty.stationary)
   }
 
-  plot_one(c, hat_omega, G[1], expression(c), margen)
-  plot_one(alpha, hat_alpha, G[2], expression(alpha), margen)
-  plot_one(beta,  hat_beta,  G[3], expression(beta), margen)
+  plot_one(c, hat_omega, G[1], expression(c(u)), margen)
+  mtext(side=1, text = "u", line=3, cex=1.5)
+  plot_one(alpha, hat_alpha, G[2], expression(alpha(u)), margen)
+  mtext(side=1, text = "u", line=3, cex=1.5)
+  plot_one(beta, hat_beta, G[3], expression(beta(u)), margen)
+  mtext(side=1, text = "u", line=3, cex=1.5)
 
   invisible(data.frame(
     t = t,
@@ -684,16 +679,14 @@ tvGarchKalmanPredict <- function(object, n.ahead = 10, trace.log = FALSE)
 
     } else {
       stop("Parametric method not recognized.")
-      #stop("Metodo no parametrico no reconocido.")
     }
 
-    ## extension fuera de muestra: ultimo valor estimado
     c <- c(as.numeric(c_in), rep(tail(as.numeric(c_in), 1), n.ahead))
     a <- c(as.numeric(a_in), rep(tail(as.numeric(a_in), 1), n.ahead))
     b <- c(as.numeric(b_in), rep(tail(as.numeric(b_in), 1), n.ahead))
 
   } else {
-    stop("El objeto debe heredar de 'tvGarchKF' o 'tvGarchKFNonParam'.")
+    stop("The object must inherit from 'tvGarchKF' or 'tvGarchKFNonParam'.")
   }
 
   ## ===============================
@@ -866,7 +859,7 @@ print.tvGarchKF_predict <- function(x, digits = 6, max.print = 10, ...) {
 #' @export
 plot.tvGarchKF_predict <- function(x,
                                    main = "Prediction with confidence intervals",
-                                   xlab = "Index",
+                                   xlab = "Time",
                                    ylab = expression(hat(sigma)[t+h]),
                                    col.sigma = "black",
                                    col.ic = "gray60",
@@ -875,12 +868,12 @@ plot.tvGarchKF_predict <- function(x,
                                    lty.sigma = 1,
                                    lty.ic = 2,
                                    legend = TRUE,
-                                   legend.pos = "right",
+                                   legend.pos = "topleft",
                                    legend.cex = 1.2,
-                                   cex.axis = 1.4,
-                                   cex.lab = 1.6,
-                                   cex.main = 1.5,
-                                   mar = c(5, 5, 4, 7),
+                                   cex.axis = 2,
+                                   cex.lab = 2,
+                                   cex.main = 2,
+                                   mar = c(5, 6, 4, 2),
                                    ...)
 {
   n <- x$nsample
@@ -918,8 +911,10 @@ plot.tvGarchKF_predict <- function(x,
     lwd = lwd.sigma,
     lty = lty.sigma,
     ylim = ylim,
-    xlab = xlab,
-    ylab = ylab,
+    xlab = "",
+    ylab = "",
+    # xaxt = "n",
+    # yaxt = "n",
     main = main,
     bty = "n",
     las = 1,
@@ -928,6 +923,9 @@ plot.tvGarchKF_predict <- function(x,
     cex.main = cex.main,
     ...
   )
+
+  mtext(side = 1, text = xlab, line = 3, cex = 2)
+  mtext(side = 2, text = ylab, line = 3.5, cex = 2)
 
   if (!all(is.na(lower)) && !all(is.na(upper))) {
     lines(time_future, lower, col = col.ic, lwd = lwd.ic, lty = lty.ic)

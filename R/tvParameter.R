@@ -52,6 +52,7 @@ tvParameter<-function(data,
   T. = length(y)
   S  = S
   N  = N
+  # T. = 0:T./T.
   M  = trunc((T.-N)/S+1)
   estacionario <- garchFit(~garch(1,1), data=y, include.mean=F, trace = FALSE)
   G <- estacionario@fit$coef
@@ -64,32 +65,28 @@ tvParameter<-function(data,
   }
 
   t = S * (1:M - 1) + N/2
+  t_plot = (t-min(t))/(max(t)-min(t))
   oldpar <- par(no.readonly = TRUE)
   on.exit(par(oldpar))
   if (plot == TRUE) {
     par(mfrow = mfrow, mar = mar)
-    plot(t, omega, xlim=c(0,T.), ylim =c(min(omega)* 0.5, max(omega)*1.5), bty = "n",
-         main = expression(~c), las = 1, lwd = 3,
-         ylab = "", cex.axis = cex.axis, xlab = "", cex.main = cex.main, cex=cex.points, pch = 20)
-    abline(h=G[1],lwd=2,lty=2)
-    # if(!is.null(fit)){
-    #   lines(c ~ t, lwd = 3, type = "l", pch = 20, col = "purple")
-    # }
+    plot(t_plot, omega, xlim=c(0,max(t_plot)), ylim =c(min(omega)* 0.5, max(omega)*1.5), bty = "n",
+         main = expression(~c(u)), las = 1, lwd = 3,
+         ylab = "", cex.axis = cex.axis, xlab = "", cex.main = cex.main, cex=cex.points, pch = 20, cex.lab=3)
+    abline(h=G[1], lwd=2, lty=2)
+    mtext(side=1, text = "u", line=3, cex=1.5)
 
-    plot(t, alpha, xlim=c(0,T.), ylim = c(min(alpha)* 0.5, max(alpha)*1.5), bty = "n",
-         main = expression(~alpha), las = 1, lwd = 3,
-         ylab = "", cex.axis = cex.axis, xlab = "", cex.main = cex.main, cex=cex.points, pch = 20)
-    abline(h=G[2],lwd=2,lty=2)
-    # if(!is.null(fit)){
-    #   lines(a ~ t, lwd = 3, type = "l", pch = 20, col = "purple")
-    # }
-    plot(t, beta, xlim=c(0,T.), ylim = c(min(beta)*0.5, max(beta)*1.5), bty = "n",
-         main =expression(~beta), las = 1, lwd = 3, ylab = "", cex.axis = cex.axis, xlab = "",
-         cex.main = cex.main, cex=cex.points, pch = 20)
-    abline(h=G[3],lwd=2,lty=2)
-    # if(!is.null(fit)){
-    #   lines(b ~ t, lwd = 3, type = "l", pch = 20, col = "purple")
-    # }
+    plot(t_plot, alpha, xlim=c(0,max(t_plot)), ylim = c(min(alpha)* 0.5, max(alpha)*1.5), bty = "n",
+         main = expression(~alpha(u)), las = 1, lwd = 3,
+         ylab = "", cex.axis = cex.axis, xlab = "", cex.main = cex.main, cex=cex.points, pch = 20, cex.lab=3)
+    abline(h=G[2], lwd=2, lty=2)
+    mtext(side=1, text = "u", line=3, cex=1.5)
+
+    plot(t_plot, beta, xlim=c(0,max(t_plot)), ylim = c(min(beta)*0.5, max(beta)*1.5), bty = "n",
+         main =expression(~beta(u)), las = 1, lwd = 3, ylab = "", cex.axis = cex.axis, xlab = "",
+         cex.main = cex.main, cex=cex.points, pch = 20, cex.lab=3)#, mgp = c(6, 1, 0))
+    abline(h=G[3], lwd=2, lty=2)
+    mtext(side=1, text = "u", line=3, cex=1.5)
   }
 
   if(is.null(title)) title = "TV-GARCH Modelling applied Kalman Filter"
